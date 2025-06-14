@@ -1,12 +1,5 @@
+
 <!DOCTYPE html>
-<!--
-Created using JS Bin
-http://jsbin.com
-
-Copyright (c) 2025 by anonymous (http://jsbin.com/gekodaluze/1/edit)
-
-Released under the MIT license: http://jsbin.mit-license.org
--->
 <meta name="robots" content="noindex">
 <html lang="es">
 <head>
@@ -33,19 +26,19 @@ Released under the MIT license: http://jsbin.mit-license.org
       left: 0;
       width: 100%;
       height: 150px;
-      background: url('https://i.imgur.com/U3Z3omL.png') repeat-x;
+       /* background: url('https://pngimg.com/uploads/cloud/cloud_PNG112218.png') repeat-x;
       background-size: contain;
-      animation: moverNubes 60s linear infinite;
+      animation: moverNubes 90s linear infinite; */
       z-index: 0;
-      opacity: 0.5;
+      opacity: 1;
       filter: brightness(1);
       transition: filter 1s ease;
     }
 
-    @keyframes moverNubes {
+   /* @keyframes moverNubes {
       from { background-position-x: 0; }
       to { background-position-x: 1000px; }
-    }
+    } */
 
     .sol, .luna {
       position: absolute;
@@ -69,14 +62,29 @@ Released under the MIT license: http://jsbin.mit-license.org
       box-shadow: 0 0 20px 6px rgba(255, 255, 255, 0.2);
     }
 
-    .estrellas {
+    
+    #cielo-estrellado {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 40%; /* Ajusta según la altura del cielo */
+  z-index: 0;
+  pointer-events: none;
+}
+    
+    
+    /*.estrellas {
       position: absolute;
       top: 0;
       left: 0;
       width: 100%;
-      height: 100%;
-      background-image: radial-gradient(white 1px, transparent 1px);
-      background-size: 3px 3px;
+      height: 20%;
+      background-image:
+    radial-gradient(white 1.5px, transparent 1.5px),
+    radial-gradient(white 2px, transparent 2px),
+    radial-gradient(white 1px, transparent 1px);
+  background-size: 30px 30px, 50px 50px, 80px 80px;
       opacity: 0;
       z-index: 0;
       animation: parpadeoEstrellas 2s infinite ease-in-out alternate;
@@ -87,21 +95,22 @@ Released under the MIT license: http://jsbin.mit-license.org
     @keyframes parpadeoEstrellas {
       from { opacity: 0.3; }
       to { opacity: 0.6; }
-    }
+    } */
 
     .texto {
       position: absolute;
-      top: 20%;
+      top: 30%;
       left: 5%;
-      max-width: 280px;
-      font-size: 1.3rem;
-      color: #4b5563;
+      max-width: 400px;
+      font-size: 1.8rem;
+      color: #ff0004;
       z-index: 10;
       white-space: pre-wrap;
       line-height: 1.4;
       text-align: left;
       opacity: 0;
       transition: opacity 1s ease;
+      font-family: 'Chewy', cursive;
     }
 
     .aparecer {
@@ -114,7 +123,7 @@ Released under the MIT license: http://jsbin.mit-license.org
       width: 100%;
       text-align: center;
       font-size: 1.2rem;
-      color: #1f2937;
+      color: #2567fe;
       z-index: 10;
       font-family: "Press Start 2P", system-ui;
     }
@@ -161,7 +170,22 @@ Released under the MIT license: http://jsbin.mit-license.org
   </style>
 </head>
 <body>
-  <div class="nubes" id="nubes"></div>
+  
+  <canvas id="cielo-estrellado"></canvas>
+  <script src="script.js"></script>
+  
+  
+  
+  <div class="nubes" id="nubes">
+  <img src="https://pngimg.com/uploads/cloud/cloud_PNG112218.png" style="position: absolute; left: 10%; top: 20px; width: 170px; opacity: 0.8; pointer-events:none;">
+  <img src="https://pngimg.com/uploads/cloud/cloud_PNG112218.png" style="position: absolute; left: 40%; top: 50px; width: 80px; opacity: 0.7; pointer-events:none;">
+  <img src="https://pngimg.com/uploads/cloud/cloud_PNG112218.png" style="position: absolute; left: 70%; top: 10px; width: 100px; opacity: 0.9; pointer-events:none;">
+  <img src="https://pngimg.com/uploads/cloud/cloud_PNG112218.png" style="position: absolute; left: 85%; top: 40px; width: 60px; opacity: 0.6; pointer-events:none;">
+  <img src="https://pngimg.com/uploads/cloud/cloud_PNG112218.png" style="position: absolute; left: 75%; top: 80px; width: 170px; opacity: 0.8; pointer-events:none;">
+  <img src="https://pngimg.com/uploads/cloud/cloud_PNG112218.png" style="position: absolute; left: 90%; top: 5px; width: 80px; opacity: 0.7; pointer-events:none;">
+  <img src="https://pngimg.com/uploads/cloud/cloud_PNG112218.png" style="position: absolute; left: 5%; top: 60px; width: 100px; opacity: 0.9; pointer-events:none;">
+</div>
+
   <div class="estrellas" id="estrellas"></div>
   <div class="sol"></div>
   <div class="luna"></div>
@@ -170,6 +194,82 @@ Released under the MIT license: http://jsbin.mit-license.org
   <canvas id="arbolCanvas"></canvas>
 
   <script>
+    // animacion de estrellas 
+    const canvasEstrellas = document.getElementById('cielo-estrellado');
+const ctxEstrellas = canvasEstrellas.getContext('2d');
+
+let estrellas = [];
+let animacionId = null;
+
+function crearEstrellasAnimadas(cantidad) {
+  canvasEstrellas.width = window.innerWidth;
+  canvasEstrellas.height = window.innerHeight * 0.4;
+
+  estrellas = [];
+  for (let i = 0; i < cantidad; i++) {
+    estrellas.push({
+      x: Math.random() * canvasEstrellas.width,
+      y: Math.random() * canvasEstrellas.height,
+      radio: Math.random() * 1.5 + 0.5,
+      alpha: Math.random(),
+      delta: (Math.random() * 0.01 + 0.005) * (Math.random() < 0.5 ? 1 : -1)
+    });
+  }
+}
+
+function animarEstrellas() {
+  ctxEstrellas.clearRect(0, 0, canvasEstrellas.width, canvasEstrellas.height);
+
+  for (let estrella of estrellas) {
+    estrella.alpha += estrella.delta;
+    if (estrella.alpha <= 0 || estrella.alpha >= 1) {
+      estrella.delta *= -1;
+      estrella.alpha = Math.max(0, Math.min(1, estrella.alpha));
+    }
+
+    ctxEstrellas.beginPath();
+    ctxEstrellas.arc(estrella.x, estrella.y, estrella.radio, 0, Math.PI * 2);
+    ctxEstrellas.fillStyle = `rgba(255, 255, 255, ${estrella.alpha})`;
+    ctxEstrellas.fill();
+  }
+
+  animacionId = requestAnimationFrame(animarEstrellas);
+}
+
+function iniciarAnimacionSegunHora() {
+  const ahora = new Date();
+  const hora = ahora.getHours();
+  const esDeNoche = (hora >= 19 || hora < 6);
+
+  if (esDeNoche) {
+    if (!animacionId) { // Evita animar varias veces
+      crearEstrellasAnimadas(150);
+      animarEstrellas();
+    }
+  } else {
+    if (animacionId) {
+      cancelAnimationFrame(animacionId);
+      animacionId = null;
+    }
+    ctxEstrellas.clearRect(0, 0, canvasEstrellas.width, canvasEstrellas.height);
+  }
+}
+
+// Ejecuta la primera vez
+iniciarAnimacionSegunHora();
+
+// Opcional: Revisar cada minuto si cambió el horario
+setInterval(iniciarAnimacionSegunHora, 60000);
+
+window.addEventListener('resize', () => {
+  if (animacionId) {
+    cancelAnimationFrame(animacionId);
+    animacionId = null;
+  }
+  iniciarAnimacionSegunHora();
+});
+    
+    
     // Cambios visuales por hora
     function cambiarFondoPorHora() {
       const hora = new Date().getHours();
@@ -182,11 +282,11 @@ Released under the MIT license: http://jsbin.mit-license.org
         body.style.background = "linear-gradient(#fef9c3, #fde68a)";
         nubes.style.filter = "brightness(1)";
       } else if (hora >= 18 && hora < 20) {
-        body.style.background = "linear-gradient(#fcd34d, #fca5a5)";
+        body.style.background = "linear-gradient(#400086, #f28b01)";
         nubes.style.filter = "brightness(0.8)";
       } else {
         body.style.background = "linear-gradient(#0f172a, #1e293b)";
-        nubes.style.filter = "brightness(0.4)";
+        nubes.style.filter = "brightness(0.4)";        
       }
     }
 
@@ -194,11 +294,11 @@ Released under the MIT license: http://jsbin.mit-license.org
       const hora = new Date().getHours();
       const sol = document.querySelector(".sol");
       const luna = document.querySelector(".luna");
-      const estrellas = document.getElementById("estrellas");
+      //const estrellas = document.getElementById("estrellas");
 
-      sol.style.opacity = (hora >= 12 && hora < 18) ? "1" : "0";
+      sol.style.opacity = (hora >= 6 && hora < 18) ? "1" : "0";
       luna.style.opacity = (hora >= 18 || hora < 6) ? "1" : "0";
-      estrellas.style.opacity = (hora >= 18 || hora < 6) ? "1" : "0";
+      //estrellas.style.opacity = (hora >= 18 || hora < 6) ? "1" : "0";
     }
 
     cambiarFondoPorHora();
@@ -236,7 +336,11 @@ Released under the MIT license: http://jsbin.mit-license.org
       textoDiv.classList.add("aparecer");
       escribirTexto();
     }, 1000);
+    
+    
 
+      
+    
     // ANIMACIÓN DEL ÁRBOL
     const canvas = document.getElementById("arbolCanvas");
     const ctx = canvas.getContext("2d");
@@ -299,8 +403,8 @@ Released under the MIT license: http://jsbin.mit-license.org
         const easedProgress = 1 - Math.pow(1 - this.progress, 3);
         const finX = this.x + Math.cos(this.angulo) * this.longitud * easedProgress;
         const finY = this.y - Math.sin(this.angulo) * this.longitud * easedProgress;
-        let anchoBase = this.profundidad === 0 ? 30 : Math.max(this.anchoPadre * 0.7, 1.5);
-        let anchoPunta = Math.max(anchoBase * 0.6, 1);
+        let anchoBase = this.profundidad === 0 ? 30 : Math.max(this.anchoPadre * 0.8, 1.5);
+        let anchoPunta = Math.max(anchoBase * 0.4, 1);
         let color = this.profundidad === 0 ? "#4b2e05" : `rgb(60,${50 + this.profundidad * 15},20)`;
         dibujarTrapezoide(this.x + desplazamientoX, this.y, finX + desplazamientoX, finY, anchoBase, anchoPunta, color);
         if (this.progress >= 1 && !this.expandidas && this.profundidad < 6) {
@@ -391,7 +495,33 @@ Released under the MIT license: http://jsbin.mit-license.org
       requestAnimationFrame(animar);
     }
     animar();
+    
+    /* Animacion de nubes */
+   const nubes = document.querySelectorAll('#nubes img');
+const velocidades = [0.02, 0.08, 0.020, 0.015,0.02, 0.08, 0.020, 0.015]; // velocidad diferente para cada nube (px por frame)
+const posiciones = [];
+
+nubes.forEach((nube, i) => {
+  posiciones[i] = parseFloat(nube.style.left); // guarda la posición inicial en porcentaje
+});
+
+function animarNubes() {
+  nubes.forEach((nube, i) => {
+    let pos = posiciones[i];
+    pos += velocidades[i];
+    if (pos > 110) pos = -20; // si la nube sale por derecha, vuelve a entrar por izquierda
+    posiciones[i] = pos;
+    nube.style.left = pos + '%';
+  });
+  requestAnimationFrame(animarNubes);
+}
+
+animarNubes();
+   
+    setInterval(() => {
+  crearEstrellas(canvasEstrellas, 150);
+}, 3000); // se regenera cada 3 segundos
+    
   </script>
 </body>
 </html>
-
